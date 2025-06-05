@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Definisi/Membuat route CRUD users dengan apiResource
 
+//Authentication and user management
 Route::post('register', [UserController::class, 'store']);
 
 Route::post('login', [AuthenticationController::class, 'login']);
@@ -30,16 +30,17 @@ Route::get('logout', [AuthenticationController::class, 'logout'])->middleware('a
 
 Route::get('profile', [AuthenticationController::class, 'profile'])->middleware('auth:sanctum');
 
+//route for admin
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
  Route::apiResource('categories', CategoryController::class)->only('index');
  Route::apiResource('admin/categories', CategoryController::class)->only(['store', 'update', 'destroy']);
  Route::apiResource('admin/cars', CarController::class)->only(['store', 'update', 'destroy']);
 });
 
+//route for customer
 Route::middleware(['auth:sanctum', 'role:customer'])->group(function () {
  Route::apiResource('bookings', BookingController::class)->only(['store', 'index']);
 });
 
-
-
+//route for guest, customer and admin
 Route::apiResource('cars', CarController::class)->only(['index', 'show']);
