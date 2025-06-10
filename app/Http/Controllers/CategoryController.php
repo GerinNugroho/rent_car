@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreCategoryRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CategoryController extends Controller
 {
@@ -22,7 +23,11 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
         $category = Category::create($validated);
-        return response()->json(['message' => "kategori berhasil disimpan", "data" => $category], 201);
+        return response()->json([
+            'status' => true,
+            'message' => 'kategori berhasil disimpan',
+            'data' => $category
+        ], 201);
     }
 
     /**
@@ -30,7 +35,19 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        return response()->json(Category::findOrFail(($id)));
+        try {
+            $category = Category::findOrFail($id);
+        } catch (ModelNotFoundException $error) {
+            return response()->json([
+                'status' => false,
+                'message' => 'kategori tidak ditemukan',
+            ], 404);
+        }
+        return response()->json([
+            'status' => true,
+            'message' => 'kategori ditemukan',
+            'data' => $category
+        ]);
     }
 
     /**
@@ -38,9 +55,20 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $category = Category::findOrFail($id);
+        try {
+            $category = Category::findOrFail($id);
+        } catch (ModelNotFoundException $error) {
+            return response()->json([
+                'status' => false,
+                'message' => 'kategori tidak ditemukan'
+            ], 404);
+        }
         $category->update($request->all());
-        return response()->json(["message" => "kategory berhasil diperbarui", "data" => $category]);
+        return response()->json([
+            'status' => true,
+            'message' => 'kategori berhasil diupdate',
+            'data' => $category
+        ]);
     }
 
     /**
@@ -48,7 +76,18 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
+        try {
+            $category = Category::findOrFail($id);
+        } catch (ModelNotFoundException $error) {
+            return response()->json([
+                'status' => false,
+                'message' => 'kategori tidak ditemukan'
+            ], 404);
+        }
         Category::findOrFail($id)->delete();
-        return response()->json(["message" => "kategori berhasil dihapus"]);
+        return response()->json([
+            'status' => true,
+            'message' => 'kategori berhasil dihapus'
+        ]);
     }
 }

@@ -2,26 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\Car;
 use Carbon\Carbon;
+use App\Models\Car;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
-            'car_id' =>  'required'
+        $validator = Validator::make($request->all(), [
+            'car_id' => 'required'
         ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => [
+                    $validator->errors()
+                ]
+            ], 400);
+        }
         $car = Car::where('id', $request->car_id)->first();
-
-
         if ($car && !($car->status == 'available')) {
             return response()->json([
-                'message' => 'Mobil tidak tersedia!'
-            ]);
+                'status' => false,
+                'message' => 'mobil tidak tersedia'
+            ], 204);
         }
 
         $car->status = 'unavailable';

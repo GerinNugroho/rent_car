@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreCategoryRequest extends FormRequest
+class requestAuthenticator extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,15 +24,17 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:500',
+            'email' => 'required|email',
+            'password' => 'required',
         ];
     }
+
     public function messages()
     {
         return [
-            'name.required' => 'Nama kategori wajib diisi.',
-            'description.required' => 'Deskripsi kategori wajib diisi.',
+            'email.required' => 'email wajib diisi!',
+            'email.email' => 'format penulisan email salah!',
+            'password.required' => 'password wajib diisi!'
         ];
     }
     protected function failedValidation(Validator $validator)

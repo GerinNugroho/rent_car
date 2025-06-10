@@ -35,6 +35,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
  Route::apiResource('categories', CategoryController::class)->only('index');
  Route::apiResource('admin/categories', CategoryController::class)->only(['store', 'update', 'destroy']);
  Route::apiResource('admin/cars', CarController::class)->only(['store', 'update', 'destroy']);
+ Route::apiResource('admin/users', UserController::class);
 });
 
 //route for customer
